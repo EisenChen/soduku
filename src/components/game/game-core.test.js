@@ -1,4 +1,4 @@
-const Soduku = require('./game-core');
+import { Soduku } from "./game-core";
 
 describe('Game Test', () => {
     let game = new Soduku();
@@ -200,7 +200,7 @@ describe('Game Test', () => {
                 game.setAnswer(i, i, i % 3 + 1);
             }
         }
-        expect(game.getCandidates(0, 0)).toStrictEqual([]);
+        expect(game.getCandidates(0, 0)).toStrictEqual([1, 4, 5, 6, 7, 8, 9]);
         expect(game.getCandidates(0, 1)).toStrictEqual([4, 5, 6, 7, 8, 9]);
         expect(game.getCandidates(0, 2)).toStrictEqual([4, 5, 6, 7, 8, 9]);
         expect(game.getCandidates(0, 3)).toStrictEqual([2, 3, 4, 5, 6, 7, 8, 9]);
@@ -273,7 +273,7 @@ describe('Game Test', () => {
     });
     test('auto fill answer', () => {
         game.generate();
-        game.autoFill();
+        game.fillAllAnswer();
         let count = 0;
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {
@@ -284,7 +284,7 @@ describe('Game Test', () => {
         expect(game.isValid()).toBe(true);
 
         game.generate('medium');
-        game.autoFill();
+        game.fillAllAnswer();
         count = 0;
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {
@@ -295,7 +295,7 @@ describe('Game Test', () => {
         expect(game.isValid()).toBe(true);
 
         game.generate('hard');
-        game.autoFill();
+        game.fillAllAnswer();
         count = 0;
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {

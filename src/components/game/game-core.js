@@ -1,4 +1,4 @@
-class soduku {
+export class Soduku {
     constructor() {
         this.board = Array.from(Array(9), () => Array(9).fill(-1));
         this.boardResetValue = Array.from(Array(9), () => Array(9).fill(-1));
@@ -74,11 +74,13 @@ class soduku {
         return true;
     }
     getCandidates(i, j) {
-        if (this.board[i][j] != -1) return [];
+        let val = this.board[i][j];        
+        this.board[i][j] = -1;
         let arr = [];
         for (let k = 1; k < 10; k++) {
             if (this.isValidAnswer(i, j, k)) arr.push(k);
         }
+        this.board[i][j] = val;
         return arr;
     }
     generateGame(i = 0, j = 0) {
@@ -149,7 +151,7 @@ class soduku {
         if (this.level === 'medium') this.restOfCells = 40;
         if (this.level === 'hard') this.restOfCells = 60;
     }
-    autoFill() {
+    fillAllAnswer() {
         let cells = [];
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {
@@ -185,4 +187,3 @@ class soduku {
         this.setGameResetValue();
     }
 }
-module.exports = soduku

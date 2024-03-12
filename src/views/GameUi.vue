@@ -1,5 +1,14 @@
 <template>
     <div class='container'>
+        <div class="game-board" @click="setTimer()">
+            <div v-for="(row, ridx) in board" :key="ridx" class="row">
+                <div v-for="(cell, cidx) in row" :key="cidx" :id="'cell-' + ridx + cidx" :value="ridx + ',' + cidx"
+                    class="cell" :class="{ 'selectable': gameResetVal[ridx][cidx] === -1, }"
+                    @click="setSelectedCellStyle">
+                    {{ cell == -1 ? '' : cell }}
+                </div>
+            </div>
+        </div>
         <div class="control-panel">
             <div class="timer">
                 <div class="timer-text">Time</div>
@@ -9,7 +18,7 @@
                 {{ message }}
             </div>
             <div class="controller-board">
-                <select v-model="level" @change="init">
+                <select class="level-selector" v-model="level" @change="init">
                     <option value="easy">Easy</option>
                     <option value="medium">Medium</option>
                     <option value="hard">Hard</option>
@@ -21,27 +30,20 @@
             <div class="answer-board">
                 <button v-for="i in 9" :key="i" @click="setAnswer(i)" class="answer">{{ i }}</button>
                 <button class="answer" @click="setAnswer(-1)">Clear</button>
-                <button class="answer" @click="autoFill">AutoFill</button>
-            </div>
-        </div>
-        <div class="game-board" @click="setTimer()">
-            <div v-for="(row, ridx) in board" :key="ridx" class="row">
-                <div v-for="(cell, cidx) in row" :key="cidx" :id="'cell-' + ridx + cidx" :value="ridx + ',' + cidx"
-                    class="cell" :class="{ 'selectable': gameResetVal[ridx][cidx] === -1, }" @click="setSelectedCellStyle">
-                    {{ cell == -1 ? '' : cell }}
-                </div>
+                <button class="answer" @click="fillAllAnswer">Solve</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import game from '../components/game/game-core.js'
+import { Soduku } from '../components/game/game-core.js'
+
 
 export default {
     data() {
         return {
-            sudoku: new game(),
+            sudoku: new Soduku(),
             board: [],
             level: 'easy',
             timePassed: '00:00:00',
@@ -49,7 +51,8 @@ export default {
             timer: null,
             selectedCell: null,
             gameResetVal: [],
-            restOfCells: 0
+            restOfCells: 0,
+            gameover: false,
         }
     },
     watch: {
@@ -69,14 +72,17 @@ export default {
             this.board = this.sudoku.getBoard();
             this.gameResetVal = this.sudoku.getGameResetValue();
             this.restOfCells = this.sudoku.getRestOfCells();
+            this.gameover = false;
         },
         reset() {
             this.clearHint();
             this.clearSelectedCellStyle();
             this.resetTimer();
+
             this.sudoku.resetGame();
             this.board = this.sudoku.getBoard();
             this.restOfCells = this.sudoku.getRestOfCells();
+            this.gameover = false;
         },
         getHint() {
             this.clearHint();
@@ -106,6 +112,7 @@ export default {
             }, 1000);
         },
         setTimePassed() {
+            if (this.gameover) return;
             if (this.timeCount < 0) this.timePassed = '00:00:00';
             if (this.timeCount < 0) return;
             let h = Math.floor(this.timeCount / 3600);
@@ -142,9 +149,10 @@ export default {
             if (!this.sudoku.isValid()) this.message = "Wrong!";
             else this.message = "";
         },
-        autoFill() {
-            this.sudoku.autoFill();
+        fillAllAnswer() {
+            this.sudoku.fillAllAnswer();
             this.restOfCells = 0;
+            this.gameover = true;
         }
     },
     mounted() {
@@ -159,15 +167,25 @@ export default {
     width: 100%;
     margin: auto;
     display: flex;
-    flex-direction: row-reverse;
-    border: 1px solid;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
 }
 
 .control-panel {
-    margin: auto;
+    justify-content: space-between;
     display: flex;
     flex-direction: column;
-    border-left: 1px solid
+    border: 1px solid;
+    justify-content: center;
+    align-items: center;
+}
+
+@media screen and (max-width: 1200px) {
+    .control-panel {
+        width: min(768px,80%);
+    }
 }
 
 .timer {
@@ -178,11 +196,11 @@ export default {
 }
 
 .timer-text {
-    font-size: 3rem;
+    font-size: 2.5rem;
 }
 
 .timer-time {
-    font-size: 3rem;
+    font-size: 2.5rem;
 }
 
 .message {
@@ -198,7 +216,15 @@ export default {
     flex-direction: column;
     gap: 1rem;
     width: 80%;
-    margin: 1rem auto;
+    margin: 1rem auto;    
+}
+
+.level-selector {
+    padding: 1rem 4rem 1rem 1rem;
+}
+
+.controller-board button {
+    padding: 0.5rem;
 }
 
 .answer-board {
@@ -207,7 +233,7 @@ export default {
     display: flex;
     flex-wrap: wrap;
     gap: 0.2rem;
-    padding: 1rem;
+    padding: 1rem;    
 }
 
 .answer {
@@ -221,14 +247,18 @@ export default {
 }
 
 .game-board {
+    min-width: 350px;
+    min-height: 350px;
+    width: min(100%, 768px);
+    aspect-ratio: 1/1;
     display: flex;
-    margin: auto;
-    height: fit-content;
-    width: fit-content;
-    flex-wrap: wrap;
+    padding: 2rem;
+    flex-direction: column;
 }
 
 .row {
+    width: 100%;
+    aspect-ratio: 1/1;
     margin: auto;
     display: flex;
     flex-direction: row;
@@ -236,13 +266,13 @@ export default {
 }
 
 .cell {
-    min-height: 1rem;
-    min-width: 1rem;
-    height: 5rem;
-    width: 5rem;
+    min-height: 30px;
+    min-width: 30px;
+    width: 100%;
+    aspect-ratio: 1/1;
     border: 1px solid;
     flex-grow: 1;
-    font-size: 3rem;
+    font-size: min(6vw, 50px);
     display: flex;
     justify-content: center;
     align-items: center;

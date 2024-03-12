@@ -1,16 +1,19 @@
 <template>
   <div class="content">
-    <GameUi></GameUi>
+    <GameUi></GameUi>    
+    <PersonalSign></PersonalSign>
   </div>
 </template>
 
 <script>
-import GameUi from './views/GameUi.vue'
+import GameUi from './views/GameUi.vue';
+import PersonalSign from './components/PersonalSign.vue';
 
 export default {
   name: 'App',
   components: {
-    GameUi
+    GameUi,
+    PersonalSign
   }
 }
 </script>
@@ -22,12 +25,12 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 1rem;
 }
 
 .content {
-  height: 90vh;
-  width: 90vw;
+  min-height: 90vh;
+  min-width: 90vw;
   margin: auto;
 }
 </style>
