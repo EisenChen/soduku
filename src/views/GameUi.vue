@@ -146,8 +146,14 @@ export default {
             else this.restOfCells++;
         },
         checkAnswer() {
-            if (!this.sudoku.isValid()) this.message = "Wrong!";
-            else this.message = "";
+            if (!this.sudoku.isValid()) {
+                this.message = "Wrong!";
+                this.selectedCell.classList.add('wrong-answer');
+            }
+            else{
+                 this.message = "";
+                 this.selectedCell.classList.remove('wrong-answer');
+            }
         },
         fillAllAnswer() {
             this.sudoku.fillAllAnswer();
@@ -289,5 +295,9 @@ export default {
 
 .readytoinput {
     background: #00ffe5;
+}
+
+.wrong-answer {
+    background: #ff0000;
 }
 </style>
