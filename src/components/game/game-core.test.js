@@ -2,11 +2,11 @@ import { Soduku } from "./game-core";
 
 describe('Game Test', () => {
     let game = new Soduku();
-    test('valid game area', () => {
+    test('Valid game area', () => {
         expect(game.getBoard().length).toBe(9);
         expect(game.getBoard()[0].length).toBe(9);
     });
-    test('set answer', () => {
+    test('Set answer', () => {
         let board = [
             [1, 2, 3, 4, 5, 6, 7, 8, 9],
             [4, 5, 6, 7, 8, 9, 1, 2, 3],
@@ -41,7 +41,7 @@ describe('Game Test', () => {
         game.setAnswer(0, 0, 3);
         expect(game.getBoard()[0][0]).toBe(3);
     });
-    test('check row', () => {
+    test('Check row', () => {
         let board = [
             [-1, -1, -1, -1, -1, -1, -1, -1, -1], //T
             [1, 2, 3, 4, 5, 6, 7, 8, 9], //T
@@ -68,7 +68,7 @@ describe('Game Test', () => {
         expect(game.isValidRow(7)).toBe(false);
         expect(game.isValidRow(8)).toBe(false);
     });
-    test('check column', () => {
+    test('Check column', () => {
         let board = [
             [-1, 1, 9, 6, 1, 1, 1, 3, 3],
             [-1, 2, 8, 7, 3, 1, 3, 2, 3],
@@ -95,7 +95,7 @@ describe('Game Test', () => {
         expect(game.isValidCol(7)).toBe(false);
         expect(game.isValidCol(8)).toBe(false);
     });
-    test('check block', () => {
+    test('Check block', () => {
         let board = [
             [1, 3, -1, 1, 2, 3, 1, 3, 1],
             [-1, 2, -1, 4, 5, 6, 1, 2, 3],
@@ -122,7 +122,7 @@ describe('Game Test', () => {
         expect(game.isValidBlock(2, 1)).toBe(true);
         expect(game.isValidBlock(2, 2)).toBe(false);
     });
-    test('valid game board', () => {
+    test('Valid game board', () => {
         let board = [
             [1, 2, 3, 4, 5, 6, 7, 8, 9],
             [4, 5, 6, 7, 8, 9, 1, 2, 3],
@@ -158,7 +158,7 @@ describe('Game Test', () => {
         }
         expect(game.isValid()).toBe(true);
     });
-    test('clear game board', () => {
+    test('Clear game board', () => {
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {
                 game.setAnswer(i, j, 5);
@@ -171,7 +171,7 @@ describe('Game Test', () => {
             }
         }
     });
-    test('is valid answer', () => {
+    test('Is valid answer', () => {
         expect(game.isValidAnswer(0, 0, -1)).toBe(false);
         expect(game.isValidAnswer(0, 0, 10)).toBe(false);
         game.clear();
@@ -187,7 +187,7 @@ describe('Game Test', () => {
         expect(game.isValidAnswer(0, 3, 1)).toBe(false);
         expect(game.isValidAnswer(0, 3, 2)).toBe(true);
     });
-    test('get candidates', () => {
+    test('Get candidates', () => {
         game.clear();
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {
@@ -206,7 +206,7 @@ describe('Game Test', () => {
         expect(game.getCandidates(0, 3)).toStrictEqual([2, 3, 4, 5, 6, 7, 8, 9]);
         expect(game.getCandidates(0, 4)).toStrictEqual([3, 4, 5, 6, 7, 8, 9]);
     });
-    test('generateGame a valid game', () => {
+    test('GenerateGame a valid game', () => {
         game.clear();
         for (let i = 0; i < 10; i++) {
             game.clear();
@@ -214,7 +214,7 @@ describe('Game Test', () => {
             expect(game.isValid()).toBe(true);
         }
     });
-    test('set level', () => {
+    test('Set level', () => {
         game.clear();
         game.generateGame();
         game.setLevel('easy');
@@ -248,7 +248,24 @@ describe('Game Test', () => {
         }
         expect(count).toBe(60);
     });
-    test('set reset board', () => {
+    test('Get right input cell numbers of current game',()=>{
+        game.clear();
+        game.generateGame();
+        game.setLevel('easy');
+        expect(game.getRestOfCells()).toBe(20);
+
+        game.clear();
+        game.generateGame();
+        game.setLevel('medium');
+        expect(game.getRestOfCells()).toBe(40);
+
+        game.clear();
+        game.generateGame();
+        game.setLevel('hard');
+        expect(game.getRestOfCells()).toBe(60);
+        
+    });
+    test('Set reset board', () => {
         expect(game.getGameResetValue().length).toBe(9);
         expect(game.getGameResetValue()[0].length).toBe(9);
         game.generate('hard');
@@ -260,7 +277,7 @@ describe('Game Test', () => {
         }
         expect(game.getBoard()).not.toStrictEqual(game.getGameResetValue());
     });
-    test('reset board', () => {
+    test('Reset board', () => {
         game.generate('hard');
         game.setGameResetValue();
         for (let i = 0; i < 9; i++) {
@@ -271,7 +288,10 @@ describe('Game Test', () => {
         game.resetGame();
         expect(game.getBoard()).toStrictEqual(game.getGameResetValue());
     });
-    test('auto fill answer', () => {
+    test('Auto fill answer', () => {
+        game.clear();
+        expect(game.fillAllAnswer()).toBe(true);
+
         game.generate();
         game.fillAllAnswer();
         let count = 0;

@@ -158,10 +158,11 @@ export class Soduku {
                 if (this.boardResetValue[i][j] === -1) cells.push([i, j]);
             }
         }
-        this.fillAnswer(cells);
+        if(!this.#fillAnswer(cells)) return false;
         this.restOfCells = 0;
+        return true;
     }
-    fillAnswer(arr, idx = 0) {
+    #fillAnswer(arr, idx = 0) {
         if (arr === undefined) return;
         let pCol = arr[idx][0];
         let pRow = arr[idx][1];
@@ -170,7 +171,7 @@ export class Soduku {
         for (let i = 0; i < options.length; i++) {
             this.setAnswer(pCol, pRow, options[i]);
             if (idx === arr.length - 1) return true;
-            let next = this.fillAnswer(arr, idx + 1);
+            let next = this.#fillAnswer(arr, idx + 1);
             if (!next) continue;
             return true;
         }
